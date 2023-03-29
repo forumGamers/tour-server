@@ -22,7 +22,9 @@ func Connection() {
 	if uri == "" {
 		uri = "mongodb://localhost:27017"
 	}
+
 	options := options.Client().ApplyURI(uri)
+
 	if client,err := mongo.Connect(context.Background(),options) ; err != nil {
 		panic(err.Error())
 	}else {
