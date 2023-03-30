@@ -21,4 +21,5 @@ type Tour struct {
 	Achievement			primitive.ObjectID		`json:"achievement" bson:"achievement,omitempty"`
 	Tags				[]string				`json:"tags" bson:"tags"`
 	Champion			[]primitive.ObjectID	`json:"champion" bson:"champion"`
+	Image				string					`json:"image" bson:"image"`
 }

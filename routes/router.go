@@ -51,7 +51,9 @@ func Routes(){
 		c.JSON(http.StatusOK,gin.H{"message":"pong"})
 	})
 
-	// groupRoutes := r.router.Group("/api")
+	groupRoutes := r.router.Group("/api")
+
+	r.tourRoutes(groupRoutes)
 
 	port := os.Getenv("PORT")
 
