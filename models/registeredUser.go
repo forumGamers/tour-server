@@ -9,6 +9,7 @@ import (
 type RegisteredUser struct {
 	Id 				primitive.ObjectID		`json:"id" bson:"id,omitempty"`
 	TeamId			primitive.ObjectID						`json:"teamId" bson:"teamId,omitempty"`
-	Tour			primitive.ObjectID		`json:"tour" bson:"tour,omitempty"`
+	TourId			primitive.ObjectID		`json:"tour" bson:"tour,omitempty"`
 	RegisteredAt	time.Time				`json:"registeredAt" bson:"registeredAt,omitempty"`
+	Tour			Tour
 }

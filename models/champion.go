@@ -12,4 +12,5 @@ type Champion struct {
 	GameId		primitive.ObjectID		`json:"gameId" bson:"gameId,omitempty"`
 	Team		primitive.ObjectID		`json:"team" bson:"team,omitempty"` //ambil dari service lain
 	CreatedAt	time.Time				`json:"createdAt" bson:"createdAt"`
+	Game		Game
 }

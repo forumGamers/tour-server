@@ -22,4 +22,6 @@ type Tour struct {
 	Tags				[]string				`json:"tags" bson:"tags"`
 	Champion			[]primitive.ObjectID	`json:"champion" bson:"champion"`
 	Image				string					`json:"image" bson:"image"`
+	ImageId				string					`json:"imageId" bson:"imageId"`
+	Game				Game
 }

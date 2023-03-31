@@ -7,4 +7,6 @@ type Achievement struct {
 	GameId 		primitive.ObjectID		`json:"gameId" bson:"gameId,omitempty"`
 	Name		string					`json:"name" bson:"name,omitempty"`
 	Image		string					`json:"image" bson:"image"`
+	ImageId		string					`json:"imageId" bson:"imageId"`
+	Game		Game
 }
