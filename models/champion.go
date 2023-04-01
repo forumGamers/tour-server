@@ -11,6 +11,6 @@ type Champion struct {
 	PlayerId	[]int					`json:"playerId" bson:"playerId,omitempty"`
 	GameId		primitive.ObjectID		`json:"gameId" bson:"gameId,omitempty"`
 	Team		primitive.ObjectID		`json:"team" bson:"team,omitempty"` //ambil dari service lain
-	CreatedAt	time.Time				`json:"createdAt" bson:"createdAt"`
-	Game		Game
+	CreatedAt	time.Time				`json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt	time.Time				`json:"updatedAt" bson:"updatedAt,omitempty"`
 }

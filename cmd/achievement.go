@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 
 	cfg "github.com/forumGamers/tour-service/config"
 	m "github.com/forumGamers/tour-service/models"
@@ -37,13 +38,19 @@ func CreateAchievement(c *gin.Context){
 		panic(err.Error())
 	}
 
+	id,err := primitive.ObjectIDFromHex(gameId)
+
+		if err != nil {
+			panic("Invalid ObjectID")
+		}
+
 	urlCh := make(chan string)
 	fileIdCh := make(chan string)
 	errUpload := make(chan error)
 	errCh := make(chan error)
 
 	go func(data []byte,imageName string){
-		url,fileId,err := cfg.UploadImage(data,imageName,"gameImage")
+		url,fileId,err := cfg.UploadImage(data,imageName,"achievementImage")
 
 		if err != nil {
 			errUpload <- errors.New("Bad Gateway")
@@ -57,16 +64,10 @@ func CreateAchievement(c *gin.Context){
 		fileIdCh <- fileId
 	}(data,image.Filename)
 
-	go func(name string,gameId string) {
+	go func(name string,gameId string,id primitive.ObjectID) {
+
 		if err := <- errUpload ; err != nil {
 			errCh <- err
-			return
-		}
-
-		id,err := primitive.ObjectIDFromHex(gameId)
-
-		if err != nil {
-			errCh <- errors.New("Invalid ObjectID")
 			return
 		}
 
@@ -75,12 +76,14 @@ func CreateAchievement(c *gin.Context){
 			Image: <- urlCh,
 			ImageId: <- fileIdCh,
 			GameId: id,
+			CreatedAt: time.Now(),
+			UpdatedAt:time.Now(),
 		}) ; err != nil {
 			panic(err.Error())
 		}
 
 		errCh <- nil
-	}(name,gameId)
+	}(name,gameId,id)
 
 	file.Close()
 

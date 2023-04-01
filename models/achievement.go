@@ -1,6 +1,10 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Achievement struct {
 	Id 			primitive.ObjectID		`json:"id" bson:"id,omitempty"`
@@ -8,5 +12,6 @@ type Achievement struct {
 	Name		string					`json:"name" bson:"name,omitempty"`
 	Image		string					`json:"image" bson:"image"`
 	ImageId		string					`json:"imageId" bson:"imageId"`
-	Game		Game
+	CreatedAt	time.Time				`json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt	time.Time				`json:"updatedAt" bson:"updatedAt,omitempty"`
 }

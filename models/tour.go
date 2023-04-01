@@ -23,5 +23,6 @@ type Tour struct {
 	Champion			[]primitive.ObjectID	`json:"champion" bson:"champion"`
 	Image				string					`json:"image" bson:"image"`
 	ImageId				string					`json:"imageId" bson:"imageId"`
-	Game				Game
+	CreatedAt			time.Time				`json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt			time.Time				`json:"updatedAt" bson:"updatedAt,omitempty"`
 }
