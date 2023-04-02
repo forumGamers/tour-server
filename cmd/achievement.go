@@ -79,7 +79,8 @@ func CreateAchievement(c *gin.Context){
 			CreatedAt: time.Now(),
 			UpdatedAt:time.Now(),
 		}) ; err != nil {
-			panic(err.Error())
+			errCh <- err
+			return
 		}
 
 		errCh <- nil
