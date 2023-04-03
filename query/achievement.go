@@ -29,9 +29,7 @@ func GetByGameId(c *gin.Context){
 	errCh := make(chan error)
 
 	go func(id primitive.ObjectID){
-		cursor,err := getDb().Collection("achievement").Aggregate(context.Background(),bson.A{
-			bson.D{{Key: "$match", Value: bson.D{{Key: "gameId", Value: id}}}},
-		})
+		cursor,err := getDb().Collection("achievement").Find(context.Background(),bson.M{"gameId":id})
 	
 		if err != nil {
 			if err == mongo.ErrNilCursor {
@@ -46,10 +44,14 @@ func GetByGameId(c *gin.Context){
 		}
 
 		var data []bson.M
-		if err := cursor.All(context.Background(),&data) ; err != nil {
-			errCh <- err
-			dataCh <- nil
-			return
+		for cursor.Next(context.Background()){
+			var result bson.M
+			if err := cursor.Decode(&result) ; err != nil {
+				errCh <- err
+				dataCh <- nil
+				return
+			}
+			data = append(data,result)
 		}
 
 		errCh <- nil
