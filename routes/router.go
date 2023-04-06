@@ -59,6 +59,8 @@ func Routes(){
 
 	r.achievementRoutes(groupRoutes)
 
+	r.bookmarkRoutes(*groupRoutes)
+
 	port := os.Getenv("PORT")
 
 	if port == "" {

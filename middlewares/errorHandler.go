@@ -38,6 +38,15 @@ func ErrorHandler(c *gin.Context) {
 		case "Invalid ObjectID" :
 			s = http.StatusBadRequest
 			break
+		case "Invalid token" :
+			s = http.StatusUnauthorized
+			break
+		case "signature is invalid" :
+			s = http.StatusUnauthorized
+			break
+		case "name do not allow contains symbol":
+			s = http.StatusBadRequest
+			break
 		default :
 			fmt.Println(msg)
 			msg = "Internal Server Error"
