@@ -59,7 +59,9 @@ func Routes(){
 
 	r.achievementRoutes(groupRoutes)
 
-	r.bookmarkRoutes(*groupRoutes)
+	r.bookmarkRoutes(groupRoutes)
+
+	r.teamRoutes(groupRoutes)
 
 	port := os.Getenv("PORT")
 

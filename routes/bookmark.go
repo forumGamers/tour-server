@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r routes) bookmarkRoutes(rg gin.RouterGroup){
+func (r routes) bookmarkRoutes(rg *gin.RouterGroup){
 	uri := rg.Group("/bookmark")
 
 	uri.POST("/:tourId", md.Authentication, cmd.AddBookmark)

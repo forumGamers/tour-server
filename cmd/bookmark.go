@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	h "github.com/forumGamers/tour-service/helpers"
 	md "github.com/forumGamers/tour-service/middlewares"
 	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
@@ -13,9 +14,7 @@ import (
 
 func AddBookmark(c *gin.Context){
 
-	s,_ := c.Get("user")
-
-	user,_ := s.(md.User)
+	user := h.GetUser(c)
 
 	tourId := c.Param("tourId")
 

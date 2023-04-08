@@ -17,11 +17,12 @@ import (
 )
 
 func CreateTeam(c *gin.Context){
-	s,_ := c.Get("user")
 
-	user,_ := s.(md.User)
+	user := h.GetUser(c)
 
 	name := c.PostForm("name")
+
+	description := c.PostForm("description")
 
 	players := c.PostFormArray("player")
 
@@ -29,8 +30,16 @@ func CreateTeam(c *gin.Context){
 		panic("Invalid data")
 	}
 
+	if len(players) < 1 {
+		panic("Invalid data")
+	}
+
 	if h.ValidateInvalidCharacter(name) {
 		panic("name do not allow contains symbol")
+	}
+
+	if h.ValidateInvalidCharacter(description) {
+		panic("description do not allow contains symbol")
 	}
 
 	var list []int
@@ -44,6 +53,8 @@ func CreateTeam(c *gin.Context){
 
 		list = append(list, playerId)
 	}
+
+	list = append(list, user.Id)
 
 	image,err := c.FormFile("image")
 
@@ -83,7 +94,7 @@ func CreateTeam(c *gin.Context){
 		fileIdCh <- fileId
 	}(data,image.Filename)
 
-	go func(name string,user md.User,list []int) {
+	go func(name string,user md.User,list []int,description string) {
 		if err := <- errUpload ; err != nil {
 			errCh <- err
 			return
@@ -93,6 +104,7 @@ func CreateTeam(c *gin.Context){
 			Name: name,
 			OwnerId: user.Id,
 			UserId: list,
+			Description: description,
 			Image: <- urlCh,
 			ImageId: <- fileIdCh,
 			CreatedAt: time.Now(),
@@ -103,7 +115,11 @@ func CreateTeam(c *gin.Context){
 		}
 
 		errCh <- nil
-	}(name,user,list)
+	}(name,user,list,description)
+
+	file.Close()
+
+	os.Remove("uploads/"+image.Filename)
 
 	if err := <- errCh ; err != nil {
 		panic(err.Error())

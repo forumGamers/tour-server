@@ -10,18 +10,18 @@ import (
 )
 
 type User struct {
-	Email			string
-	Fullname		string
-	Iat				int
-	Id				int
-	isVerified		bool
-	PhoneNumber		string
-	Username		string
+	Email			string		`json:"email"`
+	Fullname		string		`json:"fullName"`
+	Iat				int			`json:"iat"`
+	Id				int			`json:"id"`
+	IsVerified		bool		`json:"isVerified"`
+	PhoneNumber		string		`json:"phoneNumber"`	
+	Username		string		`json:"username"`
 }
 
 func getSecretKey() (string,error){
 	if err := godotenv.Load() ; err != nil {
-		return "",errors.New("Internal Server Error")
+		return "",errors.New("Failed to load env")
 	}
 
 	return os.Getenv("SECRET"),nil
@@ -34,9 +34,15 @@ func Authentication(c *gin.Context){
 		panic("Invalid token")
 	}
 
-	secret,_ := getSecretKey()
+	secret,err := getSecretKey()
 
-	token,err := jwt.Parse(access_token,func(t *jwt.Token)(interface{},error){
+	if err != nil {
+		panic(err.Error())
+	}
+
+	claim := jwt.MapClaims{}
+
+	token,err := jwt.ParseWithClaims(access_token,claim,func(t *jwt.Token)(interface{},error){
 		return []byte(secret),nil
 	})
 
@@ -48,7 +54,7 @@ func Authentication(c *gin.Context){
 		panic("Invalid token")
 	}
 
-	c.Set("user",token.Claims)
+	c.Set("user",claim)
 
 	c.Next()
 }

@@ -47,6 +47,12 @@ func ErrorHandler(c *gin.Context) {
 		case "name do not allow contains symbol":
 			s = http.StatusBadRequest
 			break
+		case "description do not allow contains symbol":
+			s = http.StatusBadRequest
+			break
+		case "Failed to load env":
+			msg = "Failed to load env"
+			break
 		default :
 			fmt.Println(msg)
 			msg = "Internal Server Error"
