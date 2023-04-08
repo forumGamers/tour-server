@@ -54,6 +54,12 @@ func GetByGameId(c *gin.Context){
 			data = append(data,result)
 		}
 
+		if len(data) < 1 {
+			errCh <- errors.New("Data not found")
+			dataCh <- nil
+			return
+		}
+
 		errCh <- nil
 		dataCh <- data
 	}(id)

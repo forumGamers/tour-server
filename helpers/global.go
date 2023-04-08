@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	md "github.com/forumGamers/tour-service/middlewares"
+	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -24,9 +24,9 @@ func ValidateInvalidCharacter(data string) bool {
 	return regexp.MustCompile(`[^a-zA-Z0-9.,\-\s@]`).MatchString(data)
 }
 
-func GetUser(c *gin.Context) md.User {
+func GetUser(c *gin.Context) m.User {
 	claim := c.MustGet("user").(jwt.MapClaims)
-	var user md.User
+	var user m.User
 
 	for key, val := range claim {
 		switch key {

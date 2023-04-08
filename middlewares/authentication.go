@@ -9,16 +9,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type User struct {
-	Email			string		`json:"email"`
-	Fullname		string		`json:"fullName"`
-	Iat				int			`json:"iat"`
-	Id				int			`json:"id"`
-	IsVerified		bool		`json:"isVerified"`
-	PhoneNumber		string		`json:"phoneNumber"`	
-	Username		string		`json:"username"`
-}
-
 func getSecretKey() (string,error){
 	if err := godotenv.Load() ; err != nil {
 		return "",errors.New("Failed to load env")

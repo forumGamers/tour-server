@@ -11,7 +11,6 @@ import (
 
 	cfg "github.com/forumGamers/tour-service/config"
 	h "github.com/forumGamers/tour-service/helpers"
-	md "github.com/forumGamers/tour-service/middlewares"
 	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
 )
@@ -94,7 +93,7 @@ func CreateTeam(c *gin.Context){
 		fileIdCh <- fileId
 	}(data,image.Filename)
 
-	go func(name string,user md.User,list []int,description string) {
+	go func(name string,user m.User,list []int,description string) {
 		if err := <- errUpload ; err != nil {
 			errCh <- err
 			return

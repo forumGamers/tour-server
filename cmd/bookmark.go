@@ -6,7 +6,6 @@ import (
 	"time"
 
 	h "github.com/forumGamers/tour-service/helpers"
-	md "github.com/forumGamers/tour-service/middlewares"
 	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,7 +25,7 @@ func AddBookmark(c *gin.Context){
 
 	errCh := make(chan error)
 
-	go func (user md.User,id primitive.ObjectID)  {
+	go func (user m.User,id primitive.ObjectID)  {
 		if _,err := getDb().Collection("bookmark").InsertOne(context.Background(),m.Bookmark{
 			UserId: user.Id,
 			TourId: id,
