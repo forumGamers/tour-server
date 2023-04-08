@@ -8,5 +8,7 @@ import (
 func main() {
 	cfg.Connection()
 
+	cfg.Indexing()
+
 	r.Routes()
 }
