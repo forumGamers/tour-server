@@ -13,4 +13,6 @@ func (r routes) teamRoutes(rg *gin.RouterGroup){
 	uri.POST("/", md.Authentication, cmd.CreateTeam)
 
 	uri.GET("/myTeam",md.Authentication,q.GetMyTeam)
+
+	uri.GET("/:teamId",q.GetTeamById)
 }
