@@ -2,12 +2,11 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 
-	cfg "github.com/forumGamers/tour-service/config"
 	h "github.com/forumGamers/tour-service/helpers"
 	"github.com/forumGamers/tour-service/loaders"
 	m "github.com/forumGamers/tour-service/models"
@@ -58,21 +57,7 @@ func CreateGame(c *gin.Context){
 	errUpload := make(chan error)
 	errCh := make(chan error)
 
-	go func(data []byte,imageName string){
-		url,fileId,err := cfg.UploadImage(data,imageName,"gameImage")
-
-		if err != nil {
-			errUpload <- errors.New("Bad Gateway")
-			urlCh <- ""
-			fileidCh <- ""
-			return
-		}
-
-		errUpload <- nil
-		urlCh <- url
-		fileidCh <- fileId
-
-	}(data,image.Filename)
+	go h.UploadImage(data,image.Filename,"gameImage",urlCh,fileidCh,errUpload)
 
 	go func(name string,types string,description string){
 		if err := <- errUpload ; err != nil {
@@ -87,6 +72,8 @@ func CreateGame(c *gin.Context){
 			Name: name,
 			Type: types,
 			Description: description,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		}) ; err != nil {
 			errCh <- err
 			return

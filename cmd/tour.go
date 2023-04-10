@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
-	"errors"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -16,7 +18,13 @@ import (
 func CreateTour(c *gin.Context){
 	host := c.Param("teamId")
 
-	name,gameId,pricePool,slot,startDate,fee,location,description,tags :=
+	_,err := primitive.ObjectIDFromHex(host)
+
+	if err != nil {
+		panic("Invalid ObjectID")
+	}
+
+	name,gameId,pricePool,slots,startDate,registrationFee,location,description,tags :=
 	c.PostForm("name"),
 	c.PostForm("gameId"),
 	c.PostForm("pricePool"),
@@ -27,10 +35,37 @@ func CreateTour(c *gin.Context){
 	c.PostForm("description"),
 	c.PostForm("tags")
 
-	_,err := primitive.ObjectIDFromHex(host)
+	pool,err := strconv.ParseInt(pricePool,10,64)
 
 	if err != nil {
-		panic("Invalid ObjectID")
+		panic("Invalid data")
+	}
+
+	slot,err := strconv.ParseInt(slots,10,64)
+
+	if err != nil {
+		panic("Invalid data")
+	}
+
+	date,err := time.Parse("02-01-2006",startDate)
+
+	if err != nil {
+		panic("Invalid data")
+	}
+
+	fee,err := strconv.ParseInt(registrationFee,10,64)
+
+	if err != nil {
+		panic("Invalid data")
+	}
+
+	if err := h.ValidateInput(map[string]string{
+		"name":name,
+		"location":location,
+		"description":description,
+		"tags":tags,
+	}) ; err != nil {
+		panic(err.Error())
 	}
 
 	id,err := primitive.ObjectIDFromHex(gameId)
@@ -39,53 +74,44 @@ func CreateTour(c *gin.Context){
 		panic("Invalid ObjectID")
 	}
 
+	image,err := c.FormFile("image")
+
+	if err != nil {
+		panic("Invalid data")
+	}
+
+	if err := c.SaveUploadedFile(image,"uploads/"+image.Filename) ; err != nil {
+		panic(err.Error())
+	}
+
+	file,_ := os.Open("uploads/"+image.Filename)
+
+	data,err := ioutil.ReadAll(file)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	urlCh := make(chan string)
+	fileIdCh := make(chan string)
+	errUpload := make(chan error)
 	errCh := make(chan error)
+
+	go h.UploadImage(data,image.Filename,"tourImage",urlCh,fileIdCh,errUpload)
 
 	go func(
 		host string,
 		name string,
 		gameId primitive.ObjectID,
-		pricePool string,
-		slots string,
-		startDate string,
-		fees string,
+		pricePool int,
+		slot int,
+		date time.Time,
+		fee int,
 		location string,
 		description string,
 		tags string,
 	){
-		pool,err := strconv.ParseInt(pricePool,10,64)
-
-		if err != nil {
-			errCh <- errors.New("Invalid data")
-			return
-		}
-
-		slot,err := strconv.ParseInt(slots,10,64)
-
-		if err != nil {
-			errCh <- errors.New("Invalid data")
-			return
-		}
-
-		date,err := time.Parse("2023-12-30",startDate)
-
-		if err != nil {
-			errCh <- errors.New("Invalid data")
-			return
-		}
-
-		fee,err := strconv.ParseInt(fees,10,64)
-
-		if err != nil {
-			errCh <- errors.New("Invalid data")
-			return
-		}
-
-		if err := h.ValidateInput(map[string]string{
-			"name":name,
-			"location":location,
-			"description":description,
-		}) ; err != nil {
+		if err := <- errUpload ; err != nil {
 			errCh <- err
 			return
 		}
@@ -95,28 +121,45 @@ func CreateTour(c *gin.Context){
 		if _,err := getDb().Collection("tour").InsertOne(context.Background(),m.Tour{
 			Host: host,
 			Name: name,
+			Image: <- urlCh,
+			ImageId: <- fileIdCh,
 			GameId: gameId,
 			PricePool: int(pool),
 			Slot: int(slot),
 			StartDate: date,
 			Location: location,
+			Status: "Preparation",
 			RegistrationFee: int(fee),
 			Description: description,
 			Tags: tag,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		}) ; err != nil {
 			errCh <- err
 			return
 		}
+
+		errCh <- nil
 	}(
 		host,
 		name,
 		id,
-		pricePool,
-		slot,
-		startDate,
-		fee,
+		int(pool),
+		int(slot),
+		date,
+		int(fee),
 		location,
 		description,
 		tags,
 	)
+
+	file.Close()
+
+	os.Remove("uploads/"+image.Filename)
+
+	if err := <- errCh ; err != nil {
+		panic(err.Error())
+	}
+
+	c.JSON(http.StatusCreated,gin.H{"message":"success"})
 }

@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
 
-	cfg "github.com/forumGamers/tour-service/config"
+	h "github.com/forumGamers/tour-service/helpers"
 	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -49,20 +48,7 @@ func CreateAchievement(c *gin.Context){
 	errUpload := make(chan error)
 	errCh := make(chan error)
 
-	go func(data []byte,imageName string){
-		url,fileId,err := cfg.UploadImage(data,imageName,"achievementImage")
-
-		if err != nil {
-			errUpload <- errors.New("Bad Gateway")
-			urlCh <- ""
-			fileIdCh <- ""
-			return
-		}
-
-		errUpload <- nil
-		urlCh <- url
-		fileIdCh <- fileId
-	}(data,image.Filename)
+	go h.UploadImage(data,image.Filename,"achievementImage",urlCh,fileIdCh,errUpload)
 
 	go func(name string,gameId string,id primitive.ObjectID) {
 

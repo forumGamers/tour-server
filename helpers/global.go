@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	cfg "github.com/forumGamers/tour-service/config"
 	m "github.com/forumGamers/tour-service/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -47,4 +48,19 @@ func GetUser(c *gin.Context) m.User {
 		}
 	}
 	return user
+}
+
+func UploadImage(data []byte,imageName string,folderName string,urlCh chan string,fileIdCh chan string,errCh chan error){
+	url,fileId,err := cfg.UploadImage(data,imageName,folderName)
+
+		if err != nil {
+			errCh <- errors.New("Bad Gateway")
+			urlCh <- ""
+			fileIdCh <- ""
+			return
+		}
+
+		errCh <- nil
+		urlCh <- url
+		fileIdCh <- fileId
 }

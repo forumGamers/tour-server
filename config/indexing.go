@@ -86,7 +86,7 @@ func Indexing() {
 		Keys: bson.M{
 			"host":1,
 		},
-		Options: options.Index().SetUnique(true).SetBackground(true).SetName("tour_host"),
+		Options: options.Index().SetBackground(true).SetName("tour_host"),
 	}) ; err != nil {
 		panic(err.Error())
 	}
@@ -95,7 +95,7 @@ func Indexing() {
 		Keys: bson.M{
 			"gameId":1,
 		},
-		Options: options.Index().SetUnique(true).SetBackground(true).SetName("tour_game_id"),
+		Options: options.Index().SetBackground(true).SetName("tour_game_id"),
 	}) ; err != nil {
 		panic(err.Error())
 	}
