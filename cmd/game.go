@@ -10,6 +10,7 @@ import (
 	h "github.com/forumGamers/tour-service/helpers"
 	"github.com/forumGamers/tour-service/loaders"
 	m "github.com/forumGamers/tour-service/models"
+	v "github.com/forumGamers/tour-service/validation"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -19,24 +20,15 @@ func getDb()*mongo.Database {
 }
 
 func CreateGame(c *gin.Context){
-	
 	name,types,description := c.PostForm("name"),c.PostForm("type"),c.PostForm("description")
 
-	if name == "" || types == "" || description == "" {
-		panic("Invalid data")
+	if err := v.ValidateCreateGame(name,types,description) ; err != nil {
+		panic(err.Error())
 	}
 
 	image,err := c.FormFile("image")
 
 	if err != nil {
-		panic(err.Error())
-	}
-
-	if err := h.ValidateInput(map[string]string{
-		"name":name,
-		"types":types,
-		"description":description,
-	}) ; err != nil {
 		panic(err.Error())
 	}
 

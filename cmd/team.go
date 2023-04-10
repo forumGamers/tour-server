@@ -10,6 +10,7 @@ import (
 
 	h "github.com/forumGamers/tour-service/helpers"
 	m "github.com/forumGamers/tour-service/models"
+	v "github.com/forumGamers/tour-service/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,20 +24,8 @@ func CreateTeam(c *gin.Context){
 
 	players := c.PostFormArray("player")
 
-	if name == "" {
-		panic("Invalid data")
-	}
-
-	if len(players) < 1 {
-		panic("Invalid data")
-	}
-
-	if h.ValidateInvalidCharacter(name) {
-		panic("name do not allow contains symbol")
-	}
-
-	if h.ValidateInvalidCharacter(description) {
-		panic("description do not allow contains symbol")
+	if err := v.ValidateCreateTeam(name,description,players) ; err != nil {
+		panic(err.Error())
 	}
 
 	var list []int

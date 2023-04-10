@@ -39,9 +39,9 @@ func CreateAchievement(c *gin.Context){
 
 	id,err := primitive.ObjectIDFromHex(gameId)
 
-		if err != nil {
-			panic("Invalid ObjectID")
-		}
+	if err != nil {
+		panic("Invalid ObjectID")
+	}
 
 	urlCh := make(chan string)
 	fileIdCh := make(chan string)
