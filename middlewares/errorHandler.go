@@ -35,6 +35,9 @@ func ErrorHandler(c *gin.Context) {
 		case "Invalid data" :
 			s = http.StatusBadRequest
 			break
+		case "Invalid params" :
+			s = http.StatusBadRequest
+			break
 		case "Invalid ObjectID" :
 			s = http.StatusBadRequest
 			break
