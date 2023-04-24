@@ -63,6 +63,8 @@ func Routes(){
 
 	r.teamRoutes(groupRoutes)
 
+	r.UserAchievementRoutes(groupRoutes)
+
 	port := os.Getenv("PORT")
 
 	if port == "" {
