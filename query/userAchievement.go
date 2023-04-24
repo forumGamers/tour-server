@@ -18,7 +18,45 @@ func GetUserAchievement(c *gin.Context){
 	dataCh := make(chan []bson.M)
 
 	go func(id int){
-		cursor,err := getDb().Collection("userAchievement").Find(context.Background(),bson.M{"UserId":id})
+		cursor,err := getDb().Collection("userAchievement").Aggregate(context.Background(),bson.A{
+			bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: 6}}}},
+			bson.D{
+				{Key: "$lookup",
+					Value: bson.D{
+						{Key: "from", Value: "achievement"},
+						{Key: "localField", Value: "achievementId"},
+						{Key: "foreignField", Value: "_id"},
+						{Key: "as", Value: "achievement"},
+					},
+				},
+			},
+			bson.D{
+				{Key: "$unwind",
+					Value: bson.D{
+						{Key: "path", Value: "$achievement"},
+						{Key: "preserveNullAndEmptyArrays", Value: true},
+					},
+				},
+			},
+			bson.D{
+				{Key: "$lookup",
+					Value: bson.D{
+						{Key: "from", Value: "game"},
+						{Key: "localField", Value: "achievement.gameId"},
+						{Key: "foreignField", Value: "_id"},
+						{Key: "as", Value: "game"},
+					},
+				},
+			},
+			bson.D{
+				{Key: "$unwind",
+					Value: bson.D{
+						{Key: "path", Value: "$game"},
+						{Key: "preserveNullAndEmptyArrays", Value: true},
+					},
+				},
+			},
+		})
 
 		if err != nil {
 			if err == mongo.ErrNilCursor {
