@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"os"
+	"time"
 
 	md "github.com/forumGamers/tour-service/middlewares"
 	"github.com/gin-contrib/cors"
@@ -21,6 +22,14 @@ func Routes(){
 	}
 
 	r := routes { router: gin.Default() }
+
+	r.router.Use(func(c *gin.Context) {
+		c.Set("start",time.Now())
+
+		c.Next()
+	})
+
+	r.router.Use(md.Logging)
 
 	c := cors.New(cors.Config{
 		AllowOrigins: []string{os.Getenv("CORSLIST")},

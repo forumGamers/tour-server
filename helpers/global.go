@@ -26,8 +26,19 @@ func ValidateInvalidCharacter(data string) bool {
 }
 
 func GetUser(c *gin.Context) m.User {
-	claim := c.MustGet("user").(jwt.MapClaims)
+	claimMap,ok := c.Get("user")
+
 	var user m.User
+
+	if !ok {
+		return user
+	}
+
+	claim,oke := claimMap.(jwt.MapClaims)
+
+	if !oke {
+		return user
+	}
 
 	for key, val := range claim {
 		switch key {
@@ -51,7 +62,7 @@ func GetUser(c *gin.Context) m.User {
 			user.Role = val.(string)
 		case "point" :
 			user.Point = int(val.(float64))
-		case "exp" :
+		case "experience" :
 			user.Exp = int(val.(float64))
 		}
 	}
