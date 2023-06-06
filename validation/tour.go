@@ -11,15 +11,15 @@ import (
 )
 
 func ValidateCreateTour(
-	host string, 
-	name string, 
-	gameId string, 
-	pricePool string, 
-	slots string, 
-	startDate string, 
-	registrationFee string, 
-	location string, 
-	description string, 
+	host, 
+	name, 
+	gameId, 
+	pricePool, 
+	slots, 
+	startDate, 
+	registrationFee, 
+	location, 
+	description, 
 	tags string,
 	) (primitive.ObjectID,int,int,time.Time,int,error) {
 		_,err := primitive.ObjectIDFromHex(host)

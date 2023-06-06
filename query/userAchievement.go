@@ -19,7 +19,7 @@ func GetUserAchievement(c *gin.Context){
 
 	go func(id int){
 		cursor,err := getDb().Collection("userAchievement").Aggregate(context.Background(),bson.A{
-			bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: 6}}}},
+			bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: id}}}},
 			bson.D{
 				{Key: "$lookup",
 					Value: bson.D{
