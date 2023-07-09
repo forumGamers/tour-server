@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func GetAllGame(c *gin.Context){
@@ -15,7 +16,7 @@ func GetAllGame(c *gin.Context){
 	dataCh := make(chan []bson.M)
 
 	go func(){
-		cursor,err := getDb().Collection("game").Find(context.Background(),bson.M{})
+		cursor,err := getDb().Collection("game").Find(context.Background(),bson.M{},options.Find().SetSort(bson.D{{Key: "createdAt",Value: -1}}))
 
 		if err != nil {
 			errCh <- err
