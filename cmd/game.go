@@ -32,6 +32,10 @@ func CreateGame(c *gin.Context){
 		panic(err.Error())
 	}
 
+	if err := h.IsImage(image) ; err != nil {
+		panic(err.Error())
+	}
+
 	if err := c.SaveUploadedFile(image,"uploads/"+image.Filename) ; err != nil {
 		panic(err.Error())
 	}

@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"errors"
+	"fmt"
+	"mime/multipart"
 	"regexp"
 	"strings"
 
@@ -82,4 +84,22 @@ func UploadImage(data []byte,imageName string,folderName string,urlCh chan strin
 		errCh <- nil
 		urlCh <- url
 		fileIdCh <- fileId
+}
+
+func IsImage(file *multipart.FileHeader) error {
+	imgExt := []string{"png", "jpg", "jpeg", "gif", "bmp"}
+
+	ext := strings.ToLower(strings.TrimPrefix(strings.TrimPrefix(file.Filename,"."),"."))
+
+	for _,val := range imgExt {
+		if val == ext {
+			if file.Size > 10*1024*1024 {
+				return fmt.Errorf("file cannot be larger than 10 mb")
+			}
+
+			return nil
+		}
+	}
+
+	return fmt.Errorf("file type is not supported")
 }

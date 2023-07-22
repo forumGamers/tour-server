@@ -56,6 +56,12 @@ func ErrorHandler(c *gin.Context) {
 		case "Failed to load env":
 			msg = "Failed to load env"
 			break
+		case "file cannot be larger than 10 mb":
+			s = http.StatusBadRequest
+			break
+		case "file type is not supported":
+			s = http.StatusBadRequest
+			break
 		default :
 			fmt.Println(msg)
 			msg = "Internal Server Error"

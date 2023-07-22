@@ -52,6 +52,10 @@ func CreateTour(c *gin.Context){
 		panic("Invalid data")
 	}
 
+	if err := h.IsImage(image) ; err != nil {
+		panic(err.Error())
+	}
+
 	if err := c.SaveUploadedFile(image,"uploads/"+image.Filename) ; err != nil {
 		panic(err.Error())
 	}
